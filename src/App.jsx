@@ -19,6 +19,13 @@ import {
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
+const formatMinutesToTime = (totalMinutes) => {
+  const absMinutes = Math.max(0, Math.round(totalMinutes));
+  const hours = Math.floor(absMinutes / 60);
+  const minutes = absMinutes % 60;
+  return `${hours}:${minutes.toString().padStart(2, '0')}`;
+};
+
 function App() {
   const [activeTab, setActiveTab] = useState('calc') // 'calc' | 'legal'
   const [hcSemanal, setHcSemanal] = useState(44)
@@ -224,13 +231,13 @@ function App() {
                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                             <div className="flex flex-col">
                               <p className="text-xs font-bold text-slate-500 uppercase mb-1">HNL Teóricas (Requeridas)</p>
-                              <p className="text-2xl font-black text-slate-800">{(results.comparativa_hnl.teorica / 60).toFixed(2)} hrs</p>
+                              <p className="text-2xl font-black text-slate-800">{formatMinutesToTime(results.comparativa_hnl.teorica)} hrs</p>
                               <p className="text-[0.7rem] text-slate-400 mt-1">Mínimo sugerido según carga horaria de aula.</p>
                             </div>
                             <div className="flex flex-col">
                               <p className="text-xs font-bold text-slate-500 uppercase mb-1">HNL Reales (Disponibles)</p>
                               <p className={`text-2xl font-black ${results.comparativa_hnl.estado === 'Insuficiente' ? 'text-rose-600' : 'text-slate-800'}`}>
-                                {(results.comparativa_hnl.real / 60).toFixed(2)} hrs
+                                {formatMinutesToTime(results.comparativa_hnl.real)} hrs
                               </p>
                               <p className="text-[0.7rem] text-slate-400 mt-1">Tiempo restante tras descontar Aula, Recreos y Jefatura.</p>
                             </div>
@@ -242,7 +249,7 @@ function App() {
                                  <AlertCircle size={24} />
                                  <div>
                                     <p className="font-bold text-sm">Contrato con Horas Faltantes</p>
-                                    <p className="text-xs opacity-90">Faltan **{ (results.comparativa_hnl.minutos_faltantes / 60).toFixed(2) } horas** para cumplir con el tiempo no lectivo teórico.</p>
+                                    <p className="text-xs opacity-90">Faltan **{ formatMinutesToTime(results.comparativa_hnl.minutos_faltantes) } horas** para cumplir con el tiempo no lectivo teórico.</p>
                                  </div>
                               </div>
                            </div>
@@ -256,7 +263,7 @@ function App() {
                           <p className={`text-sm font-bold uppercase tracking-wider mb-2 ${results.comparativa_hnl.minutos_faltantes > 0 ? 'text-rose-600' : 'text-emerald-700'}`}>HNL Faltantes</p>
                           <div className="flex flex-col items-center justify-center mb-2">
                             <span className={`text-6xl font-black leading-none ${results.comparativa_hnl.minutos_faltantes > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                              {(results.comparativa_hnl.minutos_faltantes / 60).toFixed(2)}
+                              {formatMinutesToTime(results.comparativa_hnl.minutos_faltantes)}
                             </span>
                             <span className="text-slate-400 font-bold text-sm uppercase mt-2 tracking-widest">horas</span>
                           </div>
@@ -448,7 +455,7 @@ function LegalCard({ icon, title, children, color }) {
 
 function MetricRow({ label, value, total, color }) {
   const percentage = (value / total) * 100
-  const hours = (value / 60).toFixed(2)
+  const hours = formatMinutesToTime(value)
   return (
     <div>
       <div className="flex justify-between text-xs font-bold mb-2">
